@@ -1,0 +1,39 @@
+name: Electron Build and Publish Windows
+
+on:
+  push:
+    branches:
+      - workflows
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+
+    - name: Package Distributable Binaries
+      run: |
+        npm run package
+        Compress-Archive -Path "out\music-box-interactive-desktop-win32-x64" -DestinationPath "music-box-interactive-desktop-win32-x64.zip"
+
+    - name: Create GitHub Release
+      run: |
+        gh release create v0.1.0 --title "v0.1.0 Release" --notes "first release" "music-box-interactive-desktop-win32-x64.zip" 
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

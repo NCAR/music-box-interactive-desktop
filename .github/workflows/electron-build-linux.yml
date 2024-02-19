@@ -3,15 +3,13 @@ name: Electron Build and Publish
 on:
   push:
     branches:
-      - workflows
+      - none
+      #- workflows
+      #- main
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Repository
@@ -20,7 +18,7 @@ jobs:
     - name: Set Up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'  
+        node-version: '16'  
 
     - name: Install Dependencies
       run: npm install
@@ -31,20 +29,16 @@ jobs:
     - name: Package Distributable Binaries
       run: |
         npm run package
-        FOLDER_NAME=$(ls -d out/*/ | grep 'binaries' | head -n 1 | tr -d '/')
-        echo "::set-output name=folder-name::$FOLDER_NAME"
-        if [ "${{ matrix.os }}" == "windows-latest" ]; then
-          Compress-Archive -Path "out/$FOLDER_NAME" -DestinationPath "${FOLDER_NAME}.zip"
-        else
-          zip -r "${FOLDER_NAME}.zip" "out/${FOLDER_NAME}"
-        fi
+        FOLDER_NAME="music-box-interactive-desktop-linux-x64"
+        echo $FOLDER_NAME
+        zip -r "${FOLDER_NAME}.zip" "out/${FOLDER_NAME}"
 
     - name: Create GitHub Release
       run: |
         gh release create v0.1.0 \
-          --title "v0.1.0 Release" \
+          --title "v0.1.0 Release Linux" \
           --notes "first release" \
-          --attach "out/${FOLDER_NAME}.zip" \
+         "music-box-interactive-desktop-linux-x64.zip" \
 
 
       env:

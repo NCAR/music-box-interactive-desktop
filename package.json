@@ -1,6 +1,6 @@
 {
   "name": "music-box-interactive-desktop",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Basic App",
   "main": "main.js",
   "scripts": {
@@ -22,5 +22,8 @@
   },
   "dependencies": {
     "electron-squirrel-startup": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=16.4.0"
   }
 }
