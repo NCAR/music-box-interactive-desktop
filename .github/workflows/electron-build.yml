@@ -20,12 +20,7 @@ jobs:
     - name: Set Up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '14'
-    
-    - name: Set up GitHub CLI
-      uses: actions/setup-gh@v2
-      with:
-        gh-version: 'latest'    
+        node-version: '14'  
 
     - name: Install Dependencies
       run: npm install
@@ -53,4 +48,4 @@ jobs:
 
 
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
