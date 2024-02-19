@@ -1,0 +1,56 @@
+name: Electron Build and Publish
+
+on:
+  pull_request:
+    branches:
+      - workflows
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    
+    - name: Set up GitHub CLI
+      uses: actions/setup-gh@v2
+      with:
+        gh-version: 'latest'    
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+
+    - name: Package Distributable Binaries
+      run: |
+        npm run package
+        FOLDER_NAME=$(ls -d out/*/ | grep 'binaries' | head -n 1 | tr -d '/')
+        echo "::set-output name=folder-name::$FOLDER_NAME"
+        if [ "${{ matrix.os }}" == "windows-latest" ]; then
+          Compress-Archive -Path "out/$FOLDER_NAME" -DestinationPath "${FOLDER_NAME}.zip"
+        else
+          zip -r "${FOLDER_NAME}.zip" "out/${FOLDER_NAME}"
+        fi
+
+    - name: Create GitHub Release
+      run: |
+        gh release create v0.1.0 \
+          --title "v0.1.0 Release" \
+          --notes "first release" \
+          --attach "out/${FOLDER_NAME}.zip" \
+
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
