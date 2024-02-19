@@ -1,7 +1,7 @@
 name: Electron Build and Publish
 
 on:
-  pull_request:
+  push:
     branches:
       - workflows
 
