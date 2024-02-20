@@ -1,0 +1,151 @@
+name: Create new release
+
+on:
+  push:
+    branches:
+      - main
+      - workflows
+
+jobs:
+
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+    
+    - name: Run Tests
+      run: npm test
+
+  build:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Create Release
+        run: gh release create v0.1.0 --title "v0.1.0 Release" --notes "first release"
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  
+  windows-build:
+    runs-on: windows-latest
+    needs: build
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+
+    - name: Package Distributable Binaries
+      run: |
+        npm run package
+        Compress-Archive -Path "out\music-box-interactive-desktop-win32-x64" -DestinationPath "music-box-interactive-desktop-win32-x64.zip"
+
+    - name: Upload Distributable
+      run: |
+        gh release upload v0.1.0 "music-box-interactive-desktop-win32-x64.zip" 
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  linux-build:
+    runs-on: ubuntu-latest
+    needs: build 
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+
+    - name: Package Distributable Binaries
+      run: |
+        npm run package
+        FOLDER_NAME="music-box-interactive-desktop-linux-x64"
+        ls
+        zip -r "${FOLDER_NAME}.zip" "out/${FOLDER_NAME}"
+        ls
+
+    - name: Upload Distributable
+      run: gh release upload v0.1.0 "music-box-interactive-desktop-linux-x64.zip" 
+
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  macos-build:
+    runs-on: macos-latest
+    needs: build
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set Up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'  
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Electron Application
+      run: npm run make
+
+    - name: Package Distributable Binaries
+      run: |
+        npm run package
+        FOLDER_NAME="music-box-interactive-desktop-darwin-x64"
+        echo FOLDER_NAME
+        ls out
+        zip -r "${FOLDER_NAME}.zip" "out/${FOLDER_NAME}"
+        ls
+
+    - name: Create GitHub Release
+      run: gh release upload v0.1.0 "music-box-interactive-desktop-darwin-x64.zip" 
+
+
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    
