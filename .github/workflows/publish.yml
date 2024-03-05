@@ -1,9 +1,11 @@
 name: Publish to pages
 
 on:
-  push:
-    branches:
-      - pages-workflow
+  workflow_run:
+    workflows: ["Run Tests"]
+    branches: [main]
+    types: 
+      - completed
 
 permissions:
   contents: read
@@ -11,32 +13,6 @@ permissions:
   id-token: write
 
 jobs:
-
-  test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-
-    runs-on: ${{ matrix.os }}
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-
-    - name: Set Up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'  
-
-    - name: Install Dependencies
-      run: npm install
-
-    - name: Build Electron Application
-      run: npm run make
-    
-    - name: Run Tests
-      run: npm test
-  
   
   windows-build:
     runs-on: windows-latest
@@ -143,6 +119,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
