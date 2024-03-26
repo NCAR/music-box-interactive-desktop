@@ -11,4 +11,18 @@ export default defineConfig({
       require("./package.json").version,
     ),
   },
+  resolve: {
+    alias: {
+      'node-fetch': 'isomorphic-fetch'
+    }
+  },
+  build: {
+    rollupOptions: {
+      input: {
+        main: 'src/renderer/index.html', // Entry for the main page
+      }
+    },
+    outDir: "dist"
+  }
+
 });

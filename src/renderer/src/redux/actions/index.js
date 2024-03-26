@@ -1,10 +1,10 @@
-import utils from "../utils";
-export * from "./conditions";
-export * from "./examples";
-export * from "./mechanism";
-export * from "./run";
-export * from "./plots";
-export * from "./cookies";
+import utils from "../utils.js";
+export * from "./conditions.js";
+export * from "./examples.js";
+export * from "./mechanism.js";
+export * from "./run.js";
+export * from "./plots.js";
+export * from "./cookies.js";
 export * from "./flow.js";
 
 export const resetAll = (content) => {

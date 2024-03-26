@@ -47,7 +47,7 @@ function Layout(props) {
     }
   };
 
-  const title = `MusicBox ${process.env.VITE_APP_VERSION}`;
+  const title = `MusicBox`// ${process.env.VITE_APP_VERSION}`;
 
   return (
     <>
@@ -202,7 +202,7 @@ function Layout(props) {
                 </div>
               </div>
             </div>
-            {props.cookieBannerVisible && (
+            {false && props.cookieBannerVisible && (
               <div className={styles.consentBanner}>
                 <p>
                   UCAR uses cookies to make our website function; however, UCAR

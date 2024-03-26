@@ -9,7 +9,7 @@ import {
   getFlowFluxRangeStart,
   getFlowFluxRangeEnd,
 } from "../../redux/selectors";
-import * as styles from "../../styles/flow_graph.module.css";
+//import * as styles from "../../styles/flow_graph.module.css";
 
 function FlowGraph({ nodes, links, fluxRange }) {
   const ref = useRef();
